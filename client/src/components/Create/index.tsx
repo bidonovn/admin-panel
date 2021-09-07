@@ -16,7 +16,7 @@ import {
 import { DateTime } from 'luxon';
 import { Transaction } from 'models';
 import { transactionTypes, randomNumber } from 'utils';
-import { useAddTransaction, useTransactionsList } from 'hooks';
+import { useAddTransaction } from 'hooks';
 
 interface CreateProps {
     open: boolean;
@@ -25,7 +25,6 @@ interface CreateProps {
 
 export const Create: React.FC<CreateProps> = ({ open, onClose }) => {
     const { addTransaction, loading } = useAddTransaction();
-    const { get } = useTransactionsList();
     const [record, setRecord] = useState<Transaction>({
         number: randomNumber(),
         user: '',

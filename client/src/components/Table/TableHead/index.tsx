@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { TableCell, TableHead, TableRow, TableSortLabel } from '@abdt/ornament';
-import { headCells } from 'utils';
 import { Transaction, Order } from 'models';
 import useStyles from './style';
+import { HeadCellContext } from 'context/HeadCellContext.Provider';
 
 interface TableHeadProps {
     orderBy: keyof Transaction;
@@ -19,16 +19,22 @@ const TableHeadComponent: React.FC<TableHeadProps> = ({
     onRequestSort,
 }) => {
     const classes = useStyles();
+    const { headCells } = React.useContext(HeadCellContext);
 
     const createSortHandler =
         (property: keyof Transaction) => (event: React.MouseEvent<unknown>) => {
             onRequestSort(event, property);
         };
 
+    const activeHeadCells = React.useMemo(
+        () => headCells.filter((headCell) => headCell.isActive),
+        [headCells]
+    );
+
     return (
         <TableHead>
             <TableRow>
-                {headCells.map((headCell) => (
+                {activeHeadCells.map((headCell) => (
                     <TableCell
                         key={headCell.name}
                         align="left"

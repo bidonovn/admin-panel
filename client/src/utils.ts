@@ -28,11 +28,9 @@ export const formatDate = (
 };
 
 export const headCells: HeadCell[] = [
-    { name: 'number', label: 'Номер записи' },
-    { name: 'user', label: 'Клиент' },
-    { name: 'type', label: 'Тип транзакции' },
-    { name: 'date', label: 'Дата' },
-    { name: 'sum', label: 'Сумма' },
+    { name: 'number', label: 'Номер записи', isActive: true },
+    { name: 'user', label: 'Клиент', isActive: true },
+    { name: 'type', label: 'Тип транзакции', isActive: true },
+    { name: 'date', label: 'Дата', isActive: true },
+    { name: 'sum', label: 'Сумма', isActive: true },
 ];
-
-const b = 2;
