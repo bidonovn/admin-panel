@@ -5,7 +5,7 @@ import cn from 'classnames';
 import useStyles from './style';
 import { Transaction } from 'models';
 import TableCell from '../../TableCell';
-import { HeadCellContext } from 'context/HeadCellContext.Provider';
+import { AppContext } from 'context/AppContext.Provider';
 import { tableHelper } from '../../table-helper';
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 }
 
 const TableRowComponent: FC<Transaction & Props> = ({ ...props }) => {
-    const { headCells } = React.useContext(HeadCellContext);
+    const { headCells } = React.useContext(AppContext);
 
     const classes = useStyles();
     const history = useHistory();

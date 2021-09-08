@@ -3,7 +3,7 @@ import { Box, Button } from '@abdt/ornament';
 import { Plus, List } from '@abdt/icons';
 import FieldsList from 'components/FieldsList';
 
-export const Filter: React.FC = () => {
+export const Actions: React.FC = () => {
     const [openDialog, setOpenDialog] = useState<boolean>(false);
 
     const fieldsListDialogHandler = () => setOpenDialog(!openDialog);
@@ -34,4 +34,4 @@ export const Filter: React.FC = () => {
     );
 };
 
-export default Filter;
+export default Actions;

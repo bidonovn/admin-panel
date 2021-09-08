@@ -10,7 +10,7 @@ import {
 } from '@abdt/ornament';
 import { indexOf, find } from 'lodash';
 import useStyles from './style';
-import { HeadCellContext } from 'context/HeadCellContext.Provider';
+import { AppContext } from 'context/AppContext.Provider';
 import { Transaction } from 'models';
 
 interface FieldsListProps {
@@ -19,7 +19,7 @@ interface FieldsListProps {
 }
 
 export const FieldsList: React.FC<FieldsListProps> = ({ open, onClose }) => {
-    const { headCells, setHeadCells } = React.useContext(HeadCellContext);
+    const { headCells, setHeadCells } = React.useContext(AppContext);
     const classes = useStyles();
 
     const checkboxHandler = (cell: keyof Transaction) => {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TableCell, TableHead, TableRow, TableSortLabel } from '@abdt/ornament';
 import { Transaction, Order } from 'models';
 import useStyles from './style';
-import { HeadCellContext } from 'context/HeadCellContext.Provider';
+import { AppContext } from 'context/AppContext.Provider';
 
 interface TableHeadProps {
     orderBy: keyof Transaction;
@@ -19,7 +19,7 @@ const TableHeadComponent: React.FC<TableHeadProps> = ({
     onRequestSort,
 }) => {
     const classes = useStyles();
-    const { headCells } = React.useContext(HeadCellContext);
+    const { headCells } = React.useContext(AppContext);
 
     const createSortHandler =
         (property: keyof Transaction) => (event: React.MouseEvent<unknown>) => {
