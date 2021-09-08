@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { Box, Button } from '@abdt/ornament';
 import { Plus, List } from '@abdt/icons';
-import FieldsList from 'components/FieldsList';
+import { FieldsList, Filters } from 'components';
+import { AppContext } from 'context/AppContext.Provider';
 
 export const Actions: React.FC = () => {
+    const { filters, setFilters } = React.useContext(AppContext);
     const [openDialog, setOpenDialog] = useState<boolean>(false);
 
     const fieldsListDialogHandler = () => setOpenDialog(!openDialog);
+    const addFilterHandler = () =>
+        setFilters({ ...filters, [Object.keys(filters).length]: '' });
 
     return (
         <>
@@ -16,6 +20,7 @@ export const Actions: React.FC = () => {
                     variant="outlined"
                     color="secondary"
                     startIcon={<Plus size="small" />}
+                    onClick={addFilterHandler}
                 >
                     Добавить фильтр
                 </Button>
@@ -29,6 +34,7 @@ export const Actions: React.FC = () => {
                     Настройка полей
                 </Button>
             </Box>
+            <Filters />
             <FieldsList open={openDialog} onClose={fieldsListDialogHandler} />
         </>
     );

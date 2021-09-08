@@ -7,7 +7,7 @@ import { headCells as headCellsArray } from 'utils';
 
 export const MainPage: React.FC = () => {
     const [headCells, setHeadCells] = useState<HeadCell[]>(
-        JSON.parse(localStorage.userFields) || headCellsArray
+        JSON.parse(localStorage?.userFields) || headCellsArray
     );
     const [filters, setFilters] = useState<{ [key: string]: any }>({});
     const [query, setQuery] = useState<TransactionsQuery>({});

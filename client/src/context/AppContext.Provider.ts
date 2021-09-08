@@ -12,7 +12,7 @@ export type AppContextType = {
 };
 
 export const AppContext = React.createContext<AppContextType>({
-    headCells: JSON.parse(localStorage.userFields) || headCells,
+    headCells: JSON.parse(localStorage?.userFields) || headCells,
     setHeadCells: () => undefined,
     filters: {},
     setFilters: () => undefined,
