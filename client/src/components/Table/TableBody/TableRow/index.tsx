@@ -14,7 +14,7 @@ interface Props {
 }
 
 const TableRowComponent: FC<Transaction & Props> = ({ ...props }) => {
-    const { headCells } = React.useContext(AppContext);
+    const { userCells } = React.useContext(AppContext);
 
     const classes = useStyles();
     const history = useHistory();
@@ -25,8 +25,8 @@ const TableRowComponent: FC<Transaction & Props> = ({ ...props }) => {
     );
 
     const activeHeadCells = React.useMemo(
-        () => headCells.filter((headCell) => headCell.isActive),
-        [headCells]
+        () => userCells.filter((userCell) => userCell.isActive),
+        [userCells]
     );
 
     return (
@@ -38,7 +38,7 @@ const TableRowComponent: FC<Transaction & Props> = ({ ...props }) => {
             onClick={tableRowClickHandler}
         >
             {activeHeadCells.map((activeHeadCell) => (
-                <TableCell>
+                <TableCell key={activeHeadCell.name}>
                     {tableHelper(
                         activeHeadCell.name,
                         props[activeHeadCell.name]

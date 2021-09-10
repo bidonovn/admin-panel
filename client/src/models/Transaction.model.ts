@@ -13,9 +13,14 @@ export const transactionsTypesLabels: typesInterface = {
 };
 
 export interface Transaction {
+    /** Номер транзакции */
     number: number;
+    /** Пользователь */
     user: string;
+    /** Дата транзакции */
     date: Date | null;
+    /** Тип транзакции */
     type: keyof typeof TransactionTypeEnum | string;
+    /** Сумма транзакции */
     sum: number;
 }

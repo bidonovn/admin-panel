@@ -43,9 +43,31 @@ router.post("/list", async (req, res) => {
     const page = req.body.query.page || 1;
     const order = req.body.query.order || "asc";
     const orderBy = req.body.query.orderBy || "date";
+    const filters = req.body.query.filters;
 
-    const count = await Transaction.count();
-    const transactions = await Transaction.find({})
+    const filtersQuery = {};
+
+    const transformFilterQuery = () => {
+      filters?.map((filter) => {
+        switch (filter.filterType) {
+          case "date":
+            filtersQuery[filter.name] = {
+              $gte: filter.date.startDate,
+              $lte: filter.date.endDate,
+            };
+            break;
+          case "text":
+            filtersQuery[filter.name] = new RegExp(filter.value, "i");
+            break;
+          default:
+            filtersQuery[filter.name] = filter.value;
+        }
+      });
+    };
+
+    transformFilterQuery();
+    const count = await Transaction.count(filtersQuery);
+    const transactions = await Transaction.find(filtersQuery)
       .sort({ [orderBy]: order })
       .skip(limit * page - limit)
       .limit(limit);

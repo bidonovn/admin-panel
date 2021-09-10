@@ -27,10 +27,37 @@ export const formatDate = (
         .toFormat('dd.LL.y HH:mm');
 };
 
+export const transformDate = (date: Date, dayPart: 'start' | 'end'): string => {
+    if (dayPart === 'start') {
+        return DateTime.fromJSDate(date).startOf('day').toLocal()?.toString();
+    }
+    return DateTime.fromJSDate(date).endOf('day').toLocal()?.toString();
+};
+
+export const defaultDates = {
+    start: DateTime.local().minus({ weeks: 2 }).startOf('day').toString(),
+    end: DateTime.local().endOf('day').toString(),
+};
+
+/** Массив с информацией о существующих полях */
 export const headCells: HeadCell[] = [
-    { name: 'number', label: 'Номер записи', isActive: true },
-    { name: 'user', label: 'Клиент', isActive: true },
-    { name: 'type', label: 'Тип транзакции', isActive: true },
-    { name: 'date', label: 'Дата', isActive: true },
-    { name: 'sum', label: 'Сумма', isActive: true },
+    {
+        name: 'number',
+        label: 'Номер записи',
+        isActive: true,
+        filterType: 'text',
+    },
+    { name: 'user', label: 'Клиент', isActive: true, filterType: 'text' },
+    {
+        name: 'type',
+        label: 'Тип транзакции',
+        isActive: true,
+        filterType: 'enum',
+        options: [
+            { value: 'plus', label: 'Пополнение' },
+            { value: 'minus', label: 'Снятие' },
+        ],
+    },
+    { name: 'date', label: 'Дата', isActive: true, filterType: 'date' },
+    { name: 'sum', label: 'Сумма', isActive: true, filterType: 'number' },
 ];

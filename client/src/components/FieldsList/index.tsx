@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Dialog,
     DialogContent,
@@ -8,10 +8,11 @@ import {
     FormControlLabel,
     Checkbox,
 } from '@abdt/ornament';
-import { indexOf, find } from 'lodash';
+import { indexOf, find, isEqual } from 'lodash';
 import useStyles from './style';
 import { AppContext } from 'context/AppContext.Provider';
 import { Transaction } from 'models';
+import { headCells as headCellsArray } from 'utils';
 
 interface FieldsListProps {
     open: boolean;
@@ -19,18 +20,49 @@ interface FieldsListProps {
 }
 
 export const FieldsList: React.FC<FieldsListProps> = ({ open, onClose }) => {
-    const { headCells, setHeadCells } = React.useContext(AppContext);
+    const { userCells, setUserCells } = React.useContext(AppContext);
     const classes = useStyles();
 
+    /** Сравнивает объект из localStorage с исходным массивом на наличие и обновление полей */
+    const checkUpdate = () => {
+        const newArr = userCells;
+        headCellsArray.map((headCell) => {
+            const obj = find(newArr, { name: headCell.name });
+            if (!obj) {
+                newArr.push(headCell);
+            } else {
+                const index = indexOf(newArr, obj);
+                if (!isEqual(newArr[index], headCell)) {
+                    newArr[index] = {
+                        ...newArr[index],
+                        name: headCell.name,
+                        filterType: headCell.filterType,
+                        label: headCell.label,
+                    };
+                }
+            }
+        });
+        newArr.map((userField, index) => {
+            const obj = find(headCellsArray, { name: userField.name });
+            if (!obj) {
+                newArr.splice(index, 1);
+            }
+        });
+        setUserCells(newArr);
+        localStorage.setItem('userFields', JSON.stringify(newArr));
+    };
+
+    useEffect(() => checkUpdate(), []);
+
     const checkboxHandler = (cell: keyof Transaction) => {
-        const tmp = headCells;
+        const tmp = userCells;
         let obj = find(tmp, { name: cell });
         const index = indexOf(tmp, obj);
         if (obj) {
             obj = { ...obj, isActive: !obj?.isActive };
             tmp[index] = obj;
         }
-        setHeadCells([...tmp]);
+        setUserCells([...tmp]);
         localStorage.setItem('userFields', JSON.stringify(tmp));
     };
 
@@ -40,20 +72,20 @@ export const FieldsList: React.FC<FieldsListProps> = ({ open, onClose }) => {
             <DialogContent>
                 <Box width={320}>
                     <Grid container spacing={2}>
-                        {headCells.map((headCell) => (
-                            <Grid item xs={12}>
+                        {userCells.map((userCell) => (
+                            <Grid item xs={12} key={userCell.name}>
                                 <FormControlLabel
                                     classes={{ ...classes }}
                                     control={
                                         <Checkbox
-                                            checked={headCell.isActive}
+                                            checked={userCell.isActive}
                                             onChange={() =>
-                                                checkboxHandler(headCell.name)
+                                                checkboxHandler(userCell.name)
                                             }
                                             size="small"
                                         />
                                     }
-                                    label={headCell.label}
+                                    label={userCell.label}
                                 />
                             </Grid>
                         ))}

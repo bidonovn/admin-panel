@@ -5,13 +5,14 @@ import { FieldsList, Filters } from 'components';
 import { AppContext } from 'context/AppContext.Provider';
 
 export const Actions: React.FC = () => {
-    const { filters, setFilters } = React.useContext(AppContext);
+    const { filters, setFilters, userCells } = React.useContext(AppContext);
     const [openDialog, setOpenDialog] = useState<boolean>(false);
 
     const fieldsListDialogHandler = () => setOpenDialog(!openDialog);
     const addFilterHandler = () =>
-        setFilters({ ...filters, [Object.keys(filters).length]: '' });
+        setFilters([...filters, userCells[filters.length]]);
 
+    const disabled = Object.keys(filters).length === userCells.length;
     return (
         <>
             <Box my={2} display="flex" justifyContent="space-between">
@@ -21,6 +22,7 @@ export const Actions: React.FC = () => {
                     color="secondary"
                     startIcon={<Plus size="small" />}
                     onClick={addFilterHandler}
+                    disabled={disabled}
                 >
                     Добавить фильтр
                 </Button>

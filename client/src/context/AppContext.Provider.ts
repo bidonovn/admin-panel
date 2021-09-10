@@ -1,20 +1,20 @@
 import React from 'react';
-import { HeadCell, TransactionsQuery } from 'models';
+import { HeadCell, TransactionsQuery, Filter } from 'models';
 import { headCells } from 'utils';
 
 export type AppContextType = {
-    headCells: HeadCell[];
-    setHeadCells: (headCells: HeadCell[]) => void;
-    filters: { [key: string]: any };
-    setFilters: (filters: { [key: string]: any }) => void;
+    userCells: HeadCell[];
+    setUserCells: (userCells: HeadCell[]) => void;
+    filters: Filter[];
+    setFilters: (filters: Filter[]) => void;
     query: TransactionsQuery;
     setQuery: (query: TransactionsQuery) => void;
 };
 
 export const AppContext = React.createContext<AppContextType>({
-    headCells: JSON.parse(localStorage?.userFields) || headCells,
-    setHeadCells: () => undefined,
-    filters: {},
+    userCells: headCells,
+    setUserCells: () => undefined,
+    filters: [],
     setFilters: () => undefined,
     query: {},
     setQuery: () => undefined,

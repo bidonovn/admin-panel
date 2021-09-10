@@ -2,21 +2,23 @@ import React, { useState } from 'react';
 import { Grid, Box, Typography } from '@abdt/ornament';
 import { AddButton, Table, Actions } from 'components';
 import { AppContextProvider } from 'context/AppContext.Provider';
-import { HeadCell, TransactionsQuery } from 'models';
+import { HeadCell, TransactionsQuery, Filter } from 'models';
 import { headCells as headCellsArray } from 'utils';
 
 export const MainPage: React.FC = () => {
-    const [headCells, setHeadCells] = useState<HeadCell[]>(
-        JSON.parse(localStorage?.userFields) || headCellsArray
+    const [userCells, setUserCells] = useState<HeadCell[]>(
+        localStorage?.userFields
+            ? JSON.parse(localStorage?.userFields)
+            : headCellsArray
     );
-    const [filters, setFilters] = useState<{ [key: string]: any }>({});
+    const [filters, setFilters] = useState<Filter[]>([]);
     const [query, setQuery] = useState<TransactionsQuery>({});
 
     return (
         <AppContextProvider
             value={{
-                headCells,
-                setHeadCells,
+                userCells,
+                setUserCells,
                 filters,
                 setFilters,
                 query,

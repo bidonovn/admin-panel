@@ -19,7 +19,7 @@ const TableHeadComponent: React.FC<TableHeadProps> = ({
     onRequestSort,
 }) => {
     const classes = useStyles();
-    const { headCells } = React.useContext(AppContext);
+    const { userCells } = React.useContext(AppContext);
 
     const createSortHandler =
         (property: keyof Transaction) => (event: React.MouseEvent<unknown>) => {
@@ -27,8 +27,8 @@ const TableHeadComponent: React.FC<TableHeadProps> = ({
         };
 
     const activeHeadCells = React.useMemo(
-        () => headCells.filter((headCell) => headCell.isActive),
-        [headCells]
+        () => userCells.filter((userCell) => userCell.isActive),
+        [userCells]
     );
 
     return (
