@@ -50,8 +50,7 @@ export const DateFilter: React.FC<DateFilterProps> = ({ name }) => {
     );
 
     const fieldValue = () => {
-        // @ts-ignore
-        return find(filters, { name })?.date || '';
+        return find(filters, ['name', name])?.date;
     };
 
     return (
@@ -59,8 +58,8 @@ export const DateFilter: React.FC<DateFilterProps> = ({ name }) => {
             startText="Дата (с)"
             endText="Дата (по)"
             value={[
-                fieldValue().startDate || dateRange.startDate,
-                fieldValue().endDate || dateRange.endDate,
+                fieldValue()?.startDate || dateRange.startDate,
+                fieldValue()?.endDate || dateRange.endDate,
             ]}
             maxDate={maxDate}
             onChange={datePickerOnChange}
