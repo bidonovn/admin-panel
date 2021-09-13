@@ -1,0 +1,18 @@
+{
+    "compilerOptions":  {
+        "baseUrl": "./",
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "esnext"
+        ],
+        "target": "ES5",
+        "module": "esnext",
+        "sourceMap": true,
+        "strict": true,
+        "jsx": "react",
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "skipLibCheck": true
+    }
+}
