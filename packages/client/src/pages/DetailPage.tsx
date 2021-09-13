@@ -28,7 +28,7 @@ export const DetailPage: React.FC = () => {
             </Typography>
         );
     }
-    
+
     return (
         <>
             <Link onClick={() => history.push('/')}>На главную</Link>

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { TableCell, TableHead, TableRow, TableSortLabel } from '@abdt/ornament';
 import { Transaction, Order } from '@models';
-import useStyles from './style';
 import { AppContext } from '@context/AppContext.Provider';
+import useStyles from './style';
 
 interface TableHeadProps {
     orderBy: keyof Transaction;

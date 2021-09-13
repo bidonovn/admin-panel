@@ -1,10 +1,10 @@
 import React from 'react';
 import { TableBody } from '@abdt/ornament';
+import { Transaction } from '@models';
 import TableRow from './TableRow';
 import ErrorBody from './ErrorBody';
 import SkeletonBody from './SkeletonBody';
 import NoDataBody from './NoDataBody';
-import { Transaction } from '@models';
 
 interface TableBodyProps {
     loading: boolean;

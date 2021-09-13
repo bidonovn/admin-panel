@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Select, MenuItem, FormControl, Typography, Box } from '@abdt/ornament';
-import useStyles from './style';
 import { AppContext } from '@context/AppContext.Provider';
+import useStyles from './style';
 
 const options = [5, 10, 15];
 

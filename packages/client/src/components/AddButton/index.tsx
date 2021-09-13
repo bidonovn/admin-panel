@@ -7,11 +7,7 @@ export const AddButton: React.FC = () => {
 
     return (
         <>
-            <Button
-                size="small"
-                variant="text"
-                onClick={() => setOpen(true)}
-            >
+            <Button size="small" variant="text" onClick={() => setOpen(true)}>
                 Добавить запись
             </Button>
             <Create open={isOpen} onClose={() => setOpen(false)} />

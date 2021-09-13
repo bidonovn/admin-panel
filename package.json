@@ -3,8 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "concurrently \"wsrun --parallel dev\"",
-    "eslint": "wsrun --parallel eslint",
-    "linting": "eslint --fix --plugin tsc --rule 'tsc/config: [2, {configFile: ./tsconfig.json}]'",
+    "lint": "wsrun -s lint",
     "build": "yarn workspaces run build",
     "clean": "yarn workspaces run clean && rimraf node_modules",
     "test": "wsrun -s test --passWithNoTests"

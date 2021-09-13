@@ -28,7 +28,7 @@ router.post(
 
       const transaction = new Transaction({ number, user, date, type, sum });
       await transaction.save();
-      res.status(201).json({ message: 'Запись успешно сохранена' });
+      return res.status(201).json({ message: 'Запись успешно сохранена' });
     } catch (e) {
       return res
         .status(500)
@@ -49,7 +49,7 @@ router.post('/list', async (req, res) => {
     const filtersQuery = {};
 
     const transformFilterQuery = () => {
-      filters?.map((filter) => {
+      filters?.forEach((filter) => {
         switch (filter.filterType) {
           case 'date':
             filtersQuery[filter.name] = {
@@ -73,7 +73,7 @@ router.post('/list', async (req, res) => {
       .skip(limit * page - limit)
       .limit(limit);
 
-    res.json({
+    return res.json({
       items: transactions,
       count,
       countOnPage: transactions.length,
@@ -89,7 +89,7 @@ router.post('/list', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const transaction = await Transaction.findById(req.params.id);
-    res.json(transaction);
+    return res.json(transaction);
   } catch (e) {
     return res.status(500).json({ message: `Произошла ошибка: ${e.message}` });
   }

@@ -9,10 +9,10 @@ import {
     Checkbox,
 } from '@abdt/ornament';
 import { indexOf, find, isEqual } from 'lodash';
-import useStyles from './style';
 import { AppContext } from '@context/AppContext.Provider';
 import { Transaction } from '@models';
 import { headCells as headCellsArray } from '@utils';
+import useStyles from './style';
 
 interface FieldsListProps {
     open: boolean;
@@ -26,7 +26,7 @@ export const FieldsList: React.FC<FieldsListProps> = ({ open, onClose }) => {
     /** Сравнивает объект из localStorage с исходным массивом на наличие и обновление полей */
     const checkUpdate = () => {
         const newArr = userCells;
-        headCellsArray.map((headCell) => {
+        headCellsArray.forEach((headCell) => {
             const obj = find(newArr, { name: headCell.name });
             if (!obj) {
                 newArr.push(headCell);
@@ -42,7 +42,7 @@ export const FieldsList: React.FC<FieldsListProps> = ({ open, onClose }) => {
                 }
             }
         });
-        newArr.map((userField, index) => {
+        newArr.forEach((userField, index) => {
             const obj = find(headCellsArray, { name: userField.name });
             if (!obj) {
                 newArr.splice(index, 1);
