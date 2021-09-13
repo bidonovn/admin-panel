@@ -30,7 +30,7 @@
     "packages/**/*.{ts,tsx}": [
       "eslint --fix --plugin tsc --rule 'tsc/config: [2, {configFile: ./packages/client/tsconfig.json}]'"
     ],
-    "packages/**/*.{js}": [
+    "packages/**/*.js": [
       "eslint --fix"
     ]
   }
