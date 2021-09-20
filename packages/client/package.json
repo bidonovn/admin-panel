@@ -57,6 +57,7 @@
         "@abdt/ornament": "0.2.11",
         "@date-io/date-fns": "2.10.8",
         "axios": "0.21.0",
+        "axios-hooks": "^2.7.0",
         "classnames": "2.3.1",
         "date-fns": "^2.23.0",
         "dotenv": "8.2.0",

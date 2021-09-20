@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Grid, Box, Typography } from '@abdt/ornament';
-import { AddButton, Table, Actions } from '@components';
+import { AddButton, DataTable, Actions } from '@components';
 import { AppContextProvider } from '@context/AppContext.Provider';
 import { HeadCell, TransactionsQuery, Filter } from '@models';
 import { headCells as headCellsArray } from '@utils';
@@ -37,7 +37,7 @@ export const MainPage: React.FC = () => {
                 <Grid item xs={12}>
                     <Actions />
                 </Grid>
-                <Table />
+                <DataTable />
             </Grid>
         </AppContextProvider>
     );
