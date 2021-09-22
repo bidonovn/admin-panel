@@ -48,7 +48,11 @@ router.post("/list", async (req, res) => {
     const filtersQuery = {};
 
     const transformFilterQuery = () => {
-      filters?.map((filter) => {
+      const filtersWithValue = filters?.filter(
+        (filterItem) => filterItem.value || filterItem.date
+      );
+
+      filtersWithValue?.map((filter) => {
         switch (filter.filterType) {
           case "date":
             filtersQuery[filter.name] = {

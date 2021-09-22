@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useContext } from 'react';
+import React, { useState, useCallback, useContext, useEffect } from 'react';
 import { DateRangePicker } from '@abdt/ornament';
 import ruLocale from 'date-fns/locale/ru';
 import AdapterDateFns from '@date-io/date-fns';
@@ -18,9 +18,27 @@ export const DateFilter: React.FC<DateFilterProps> = ({ name }) => {
     const { filters, setFilters } = useContext(AppContext);
     const maxDate = React.useRef(Date.now());
     const [dateRange, setDateRange] = useState<DateRangeInterface>({
-        startDate: defaultDates.start,
-        endDate: defaultDates.end,
+        startDate: defaultDates.start.toString(),
+        endDate: defaultDates.end.toString(),
     });
+
+    const saveFilter = (start: Date | unknown, end: Date | unknown) => {
+        const newArr = filters;
+        let filter = find(newArr, { name });
+        const index = indexOf(newArr, filter);
+        if (filter) {
+            filter = {
+                ...(filter as Filter),
+                date: {
+                    startDate: transformDate(start as Date, 'start'),
+                    endDate: transformDate(end as Date, 'end'),
+                },
+            };
+            newArr[index] = filter;
+        }
+
+        setFilters(newArr);
+    };
 
     const datePickerOnChange = useCallback(
         (date: DateRange<Date | unknown>) => {
@@ -30,21 +48,8 @@ export const DateFilter: React.FC<DateFilterProps> = ({ name }) => {
                     startDate: transformDate(start as Date, 'start'),
                     endDate: transformDate(end as Date, 'end'),
                 });
-                const newArr = filters;
-                let filter = find(newArr, { name });
-                const index = indexOf(newArr, filter);
-                if (filter) {
-                    filter = {
-                        ...(filter as Filter),
-                        date: {
-                            startDate: transformDate(start as Date, 'start'),
-                            endDate: transformDate(end as Date, 'end'),
-                        },
-                    };
-                    newArr[index] = filter;
-                }
 
-                setFilters(newArr);
+                saveFilter(start as Date, end as Date);
             }
         },
         [dateRange]
@@ -54,6 +59,15 @@ export const DateFilter: React.FC<DateFilterProps> = ({ name }) => {
         // @ts-ignore
         return find(filters, { name })?.date || '';
     };
+
+    useEffect(() => {
+        if (!fieldValue()) {
+            saveFilter(
+                defaultDates.start.toJSDate(),
+                defaultDates.end.toJSDate()
+            );
+        }
+    }, []);
 
     return (
         <DateRangePicker
