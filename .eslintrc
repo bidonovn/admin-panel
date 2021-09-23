@@ -1,0 +1,18 @@
+{
+  "extends": [
+    "abdt",
+    "abdt/react",
+    "abdt/typescript"
+  ],
+  "env": {
+    "jest": true
+  },
+  "rules": {
+    "@typescript-eslint/camelcase": 0,
+    "import/prefer-default-export": 0,
+    "no-shadow": 0,
+    "react-hooks/exhaustive-deps": 0,
+    "camelcase": 0,
+    "@typescript-eslint/no-var-requires": 0
+  }
+}

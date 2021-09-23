@@ -1,0 +1,25 @@
+{
+  "name": "admin-panel-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "lint": "eslint --ext .js ./ --fix",
+    "test": "yarn jest"
+  },
+  "author": "Bidonov Nickolay",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.3.6",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-validator": "^6.12.1",
+    "mongoose": "^6.0.3"
+  },
+  "devDependencies": {
+    "concurrently": "^6.2.1",
+    "jest-extended": "^0.11.5",
+    "nodemon": "^2.0.12"
+  }
+}
