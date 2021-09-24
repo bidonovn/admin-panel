@@ -49,29 +49,26 @@ const TableComponent: React.FC = () => {
                         items={data.items}
                     />
                 </Table>
-                <Box
-                    my={3}
-                    px={3}
-                    display="flex"
-                    justifyContent="space-between"
-                    width="100%"
-                >
-                    <Typography align="right" component="div" variant="caption">
-                        Записей на странице {items.length}
-                        {' из '}
-                        {count}
-                    </Typography>
-                    <Box display="flex" flexWrap="no-wrap">
-                        <Box mr={3}>
-                            <CountPerPage />
-                        </Box>
-                        <PaginationComponent
-                            pageNumber={current}
-                            count={pages}
-                        />
-                    </Box>
-                </Box>
             </TableContainer>
+            <Box
+                my={3}
+                px={3}
+                display="flex"
+                justifyContent="space-between"
+                width="100%"
+            >
+                <Typography align="right" component="div" variant="caption">
+                    Записей на странице {items.length}
+                    {' из '}
+                    {count}
+                </Typography>
+                <Box display="flex" flexWrap="no-wrap">
+                    <Box mr={3}>
+                        <CountPerPage />
+                    </Box>
+                    <PaginationComponent pageNumber={current} count={pages} />
+                </Box>
+            </Box>
         </>
     );
 };
