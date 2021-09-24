@@ -1,6 +1,6 @@
-const { Schema, model } = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const schema = Schema({
+const schema = new Schema({
     number: { type: String, required: true, unique: true },
     user: { type: String, required: true },
     type: { type: String, enum: ['plus', 'minus'], required: true },
@@ -8,4 +8,4 @@ const schema = Schema({
     sum: { type: Number },
 });
 
-module.exports = model('Transaction', schema);
+export const Transaction = model('Transaction', schema);
