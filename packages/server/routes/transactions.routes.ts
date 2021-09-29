@@ -53,14 +53,44 @@ router.post('/list', async (req, res) => {
         const orderBy = req.body.query.orderBy || 'date';
         const { filters } = req.body.query;
 
+        const filtersArr = [];
+
+        const transformFilters = () => {
+            const filtersWithValue = filters?.filter(
+                (filterItem) => filterItem.value || filterItem.date
+            );
+
+            filtersWithValue?.forEach((filter) => {
+                switch (filter.filterType) {
+                    case 'date':
+                        filtersArr.push(
+                            `${filter.name} BETWEEN '${filter.date.startDate}' AND '${filter.date.endDate}'`
+                        );
+                        break;
+                    case 'text':
+                        filtersArr.push(
+                            `${filter.name} LIKE '%${filter.value}%'`
+                        );
+                        break;
+                    default:
+                        filtersArr.push(`${filter.name} = '${filter.value}'`);
+                }
+            });
+        };
+        transformFilters();
+
+        const filtersQuery = filtersArr.length
+            ? `WHERE ${filtersArr.join(' AND ')}`
+            : '';
+
+        /** Запрос на получение количества всех записей */
         const totalCount = await pool
-            .query('SELECT count(*) from transactions')
+            .query(`SELECT count(*) from transactions ${filtersQuery}`)
             .then((res) => res.rows[0].count);
 
-        const pages = Math.ceil(totalCount / limit);
-
+        /** Запрос с фильтрацией и сортировкой */
         pool.query(
-            `SELECT * FROM transactions ORDER BY ${orderBy} ${order} LIMIT ${limit} OFFSET ${
+            `SELECT * FROM transactions ${filtersQuery} ORDER BY ${orderBy} ${order} LIMIT ${limit} OFFSET ${
                 limit * page - limit
             }`
         )
@@ -70,7 +100,7 @@ router.post('/list', async (req, res) => {
                     count: totalCount,
                     countOnPage: result.rowCount,
                     current: page,
-                    pages,
+                    pages: Math.ceil(totalCount / limit),
                 });
             })
             .catch((error) => {
@@ -78,48 +108,6 @@ router.post('/list', async (req, res) => {
                     message: `Произошла ошибка: ${error}`,
                 });
             });
-
-        // const filtersQuery = {};
-
-        // const transformFilterQuery = () => {
-        //     const filtersWithValue = filters?.filter(
-        //         (filterItem) => filterItem.value || filterItem.date
-        //     );
-
-        //     filtersWithValue?.map((filter) => {
-        //         switch (filter.filterType) {
-        //             case 'date':
-        //                 filtersQuery[filter.name] = {
-        //                     $gte: filter.date.startDate,
-        //                     $lte: filter.date.endDate,
-        //                 };
-        //                 break;
-        //             case 'text':
-        //                 filtersQuery[filter.name] = new RegExp(
-        //                     filter.value,
-        //                     'i'
-        //                 );
-        //                 break;
-        //             default:
-        //                 filtersQuery[filter.name] = filter.value;
-        //         }
-        //     });
-        // };
-
-        // transformFilterQuery();
-        // const count = await Transaction.count(filtersQuery);
-        // const transactions = await Transaction.find(filtersQuery)
-        //     .sort({ [orderBy]: order })
-        //     .skip(limit * page - limit)
-        //     .limit(limit);
-
-        // return res.json({
-        //     items: transactions,
-        //     count,
-        //     countOnPage: transactions.length,
-        //     current: page,
-        //     pages: Math.ceil(count / limit),
-        // });
     } catch (e) {
         return res
             .status(500)

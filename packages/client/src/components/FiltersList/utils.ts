@@ -1,5 +1,13 @@
 import { Transaction, transactionsTypesLabels } from '@models';
-import { formatDateWithoutTime } from '@utils';
+import { DateTime } from 'luxon';
+
+export const formatDate = (date: Date | null | string): string | undefined => {
+    if (!date) return undefined;
+    console.log(date);
+    return DateTime.fromFormat(date.toString(), 'yyyy-LL-dd,HH:mm:ss').toFormat(
+        'dd.LL.y'
+    );
+};
 
 export const labelFormatter = (
     name: keyof Transaction,
@@ -7,9 +15,9 @@ export const labelFormatter = (
 ): string | number | undefined => {
     switch (name) {
         case 'date':
-            return `С ${formatDateWithoutTime(
-                value.startDate
-            )} по ${formatDateWithoutTime(value.endDate)}`;
+            return `С ${formatDate(value.startDate)} по ${formatDate(
+                value.endDate
+            )}`;
         case 'type':
             return `${transactionsTypesLabels[value]}`;
         default:

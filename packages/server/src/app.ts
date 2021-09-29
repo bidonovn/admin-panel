@@ -1,7 +1,6 @@
 import express from 'express';
 import { Client } from 'pg';
 import { config } from '../config';
-import mongoose from 'mongoose';
 import cors from 'cors';
 
 const PORT = config.port || 5000;

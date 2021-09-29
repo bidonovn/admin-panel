@@ -29,9 +29,9 @@ export const formatDate = (
 
 export const transformDate = (date: Date, dayPart: 'start' | 'end'): string => {
     if (dayPart === 'start') {
-        return DateTime.fromJSDate(date).startOf('day').toLocal()?.toString();
+        return DateTime.fromJSDate(date).startOf('day').toLocal()?.toFormat('yyyy-LL-dd,HH:mm:ss').toString();
     }
-    return DateTime.fromJSDate(date).endOf('day').toLocal()?.toString();
+    return DateTime.fromJSDate(date).endOf('day').toLocal()?.toFormat('yyyy-LL-dd,HH:mm:ss').toString();
 };
 
 export const defaultDates = {
@@ -45,7 +45,7 @@ export const headCells: HeadCell[] = [
         name: 'number',
         label: 'Номер записи',
         isActive: true,
-        filterType: 'text',
+        filterType: 'number',
     },
     { name: 'user_name', label: 'Клиент', isActive: true, filterType: 'text' },
     {
