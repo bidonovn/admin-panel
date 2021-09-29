@@ -13,6 +13,8 @@ export const transactionsTypesLabels: typesInterface = {
 };
 
 export interface Transaction {
+    /** id транзакции */
+    _id: string;
     /** Номер транзакции */
     number: number;
     /** Пользователь */

@@ -1,35 +1,44 @@
-import * as React from 'react';
+import React, { useMemo } from 'react';
 import { Skeleton, TableBody, TableCell, TableRow } from '@abdt/ornament';
 
-const TableSkeletonBody: React.FC = () => {
+interface TableSkeletonBodyProps {
+    rowsCount?: number;
+    cellsCount: number;
+}
+
+const TableSkeletonBody: React.FC<TableSkeletonBodyProps> = ({
+    rowsCount = 5,
+    cellsCount = 5,
+}) => {
+    const rows = useMemo(() => {
+        const arr = [];
+
+        for (let i = 0; i < rowsCount; i += 1) {
+            arr.push(i);
+        }
+
+        return arr;
+    }, [rowsCount]);
+
+    const cells = useMemo(() => {
+        const arr = [];
+
+        for (let i = 0; i < cellsCount; i += 1) {
+            arr.push(i);
+        }
+
+        return arr;
+    }, [cellsCount]);
+
     return (
-        <TableBody>
-            {[1, 2, 3].map((item) => (
-                <TableRow key={item}>
-                    <TableCell>
-                        <Skeleton variant="text" width={80} />
-                    </TableCell>
-                    <TableCell>
-                        <Skeleton variant="text" width={60} />
-                    </TableCell>
-                    <TableCell>
-                        <Skeleton variant="text" width={80} />
-                    </TableCell>
-                    <TableCell>
-                        <Skeleton variant="text" width={60} />
-                    </TableCell>
-                    <TableCell>
-                        <Skeleton variant="text" width={100} />
-                    </TableCell>
-                    <TableCell>
-                        <Skeleton variant="text" width={90} />
-                    </TableCell>
-                    <TableCell>
-                        <Skeleton variant="text" width={80} />
-                    </TableCell>
-                    <TableCell>
-                        <Skeleton variant="text" width={80} />
-                    </TableCell>
+        <TableBody key={'skelet-table'}>
+            {rows?.map((_, index) => (
+                <TableRow key={`${index}-skeleton`}>
+                    {cells.map((_, index) => (
+                        <TableCell key={`${index}-skeleton`}>
+                            <Skeleton />
+                        </TableCell>
+                    ))}
                 </TableRow>
             ))}
         </TableBody>

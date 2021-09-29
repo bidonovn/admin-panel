@@ -57,7 +57,7 @@ router.post('/list', async (req, res) => {
         const filtersQuery = {};
 
         const transformFilterQuery = () => {
-            filters?.((filter) => {
+            filters?.forEach((filter) => {
                 switch (filter.filterType) {
                     case 'date':
                         filtersQuery[filter.name] = {

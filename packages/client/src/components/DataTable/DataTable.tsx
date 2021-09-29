@@ -1,50 +1,136 @@
-import React, { useState } from 'react';
+import React, { useMemo, useCallback, useRef } from 'react';
 import { useAxios } from '@axios/config';
-import { Table, TableColumnFromProps } from './Table';
+import { TransactionsResponse } from '@models';
+import { isEqual } from 'lodash';
+import {
+    Table,
+    TableColumnFromProps,
+    TableProps,
+    TableState,
+    DateRange,
+    FilterItem,
+} from './Table';
+
+const columns = [
+    { field: 'id', headerName: 'ID', hide: true },
+    {
+        field: 'number',
+        headerName: 'Номер транзакции',
+        type: 'number',
+    },
+    {
+        field: 'user',
+        headerName: 'Клиент',
+    },
+    {
+        field: 'sum',
+        headerName: 'Сумма транзакции',
+        type: 'number',
+    },
+    {
+        field: 'type',
+        headerName: 'Тип транзакции',
+    },
+    {
+        field: 'date',
+        headerName: 'Дата транзакции',
+        type: 'date',
+    },
+] as TableColumnFromProps[];
 
 export const DataTable: React.FC = () => {
-    const [query, setQuery] = useState({});
-    const [{ data, loading, error }, refetch] = useAxios({
+    const [{ data, loading, error }, refetch] = useAxios<TransactionsResponse>({
         url: '/api/transactions/list',
         method: 'POST',
-        data: { query },
+        data: {
+            query: {},
+        },
     });
 
-    const columns = [
-        { field: 'id', headerName: 'ID' },
-        {
-            field: 'firstName',
-            headerName: 'Имя',
-        },
-        {
-            field: 'lastName',
-            headerName: 'Фамилия',
-        },
-        {
-            field: 'age',
-            headerName: 'Возраст',
-            type: 'number',
-        },
-        {
-            field: 'fullName',
-            headerName: 'Полное имя',
-        },
-    ] as TableColumnFromProps[];
+    const tableStateRef = useRef<Omit<TableState, 'hidedColumns'> | null>(null);
 
-    const rows = [
-        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-        { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-    ];
+    const tableRows = useMemo(() => {
+        return (
+            data?.items.map(({ _id, date, number, type, user, sum }) => ({
+                id: _id,
+                date,
+                number,
+                type: type === 'minus' ? 'Снятие' : 'Пополнение',
+                user,
+                sum,
+            })) || []
+        );
+    }, [data]);
+
+    const handleRowClick: TableProps['onRowClick'] = useCallback((row) => {
+        console.log(row);
+    }, []);
+
+    const handleChangeTableState = useCallback(
+        ({ hidedColumns, ...otherTableState }: TableState) => {
+            const { current: prevTableState } = tableStateRef;
+
+            const convertedTableState = {
+                ...otherTableState,
+                filters: otherTableState.filters.filter(
+                    (filterItem: FilterItem) => !!filterItem.value
+                ),
+            };
+
+            if (isEqual(prevTableState, convertedTableState)) return;
+
+            console.log('convertedTableState', convertedTableState);
+
+            refetch({
+                data: {
+                    query: {
+                        limit: convertedTableState.rowsPerPage,
+                        page: convertedTableState.currentPage,
+                        order: convertedTableState.order,
+                        orderBy:
+                            convertedTableState.orderBy === 'id'
+                                ? '_id'
+                                : convertedTableState.orderBy,
+                        filters: convertedTableState?.filters.map(
+                            ({ field, value, type }) => {
+                                if (type === 'date') {
+                                    const { start = '', end = '' } =
+                                        (value as DateRange) || {};
+
+                                    return {
+                                        name: field,
+                                        filterType: type,
+                                        date: {
+                                            startDate: start,
+                                            endDate: end,
+                                        },
+                                    };
+                                }
+
+                                return { name: field, value };
+                            }
+                        ),
+                    },
+                },
+            }).catch((e) => console.error(e));
+
+            tableStateRef.current = convertedTableState;
+        },
+        []
+    );
 
     return (
-        <Table rows={rows} columns={columns} title="Какая то таблица"></Table>
+        <Table
+            currentPage={data?.current || 1}
+            pagesCount={data?.pages || 1}
+            totalItemsCount={data?.count || 0}
+            onRowClick={handleRowClick}
+            onChangeTableState={handleChangeTableState}
+            rows={tableRows}
+            columns={columns}
+            error={error?.message}
+            loading={loading}
+        />
     );
 };
 

@@ -9,4 +9,6 @@ export interface TransactionsResponse {
     current: number;
     /** Количество страниц */
     pages: number;
+    /** Количество элементов на странице */
+    countOnPage?: number;
 }

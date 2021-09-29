@@ -1,48 +1,53 @@
-import React, { useMemo, useState } from 'react';
-import {
-    Table,
-    TableContainer,
-    Paper,
-    Box,
-    Typography,
-    Pagination,
-} from '@abdt/ornament';
-import TableBody from './TableBody';
-import TableHead from './TableHead';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
+import { Table as OrnamentTable, TableContainer, Paper } from '@abdt/ornament';
+import { TableBody } from './TableBody/TableBody';
+import { TableHead } from './TableHead/TableHead';
 import { Toolbar } from './Toolbar';
-import {
-    TableColumnFromProps,
-    TableRowFromProps,
-    TableRow,
-    TableCell,
-    FilterState,
-} from './types';
+import { TableRow, TableCell, TableState, TableProps } from './types';
+import { TablePagination } from './TablePagination';
 
-export interface TableProps {
-    columns: TableColumnFromProps[];
-    rows: TableRowFromProps[];
-    loading?: boolean;
-    error?: string;
-    title?: string;
-}
+const defaultItemsPerPageOptions = [5, 10, 15];
 
 const TableComponent: React.FC<TableProps> = ({
+    onChangeTableState = () => undefined,
+    onRowClick = () => undefined,
     columns,
     rows,
-    title,
+    title = '',
     loading,
     error,
+    pagesCount,
+    currentPage,
+    rowsPerPage,
+    rowsPerPageOptions = defaultItemsPerPageOptions,
+    totalItemsCount,
 }) => {
-    const [filterState, setFilterState] = useState<FilterState>({
+    const [tableState, setTableState] = useState<TableState>({
         order: 'asc',
         orderBy: columns[0].field,
-        hidedColumns: [],
+        filters: [],
+        currentPage,
+        rowsPerPage: rowsPerPage || defaultItemsPerPageOptions[0],
+        hidedColumns: columns
+            .filter(({ hide }) => hide)
+            .map(({ field }) => field),
     });
 
-    const filteredColumns = useMemo(
-        () => columns.filter((column) => !column?.hide),
-        [columns]
-    );
+    const isFirstRender = useRef<boolean>(true);
+
+    useEffect(() => {
+        if (!isFirstRender.current) {
+            onChangeTableState(tableState);
+        }
+
+        isFirstRender.current = false;
+    }, [tableState]);
+
+    const filteredColumns = useMemo(() => {
+        return columns.filter((column) => {
+            return !tableState.hidedColumns.includes(column.field);
+        });
+    }, [columns, tableState.hidedColumns]);
 
     const enhancedRows: TableRow[] = useMemo(() => {
         return rows.map((row) => {
@@ -64,45 +69,44 @@ const TableComponent: React.FC<TableProps> = ({
 
     return (
         <TableContainer component={Paper}>
-            <Toolbar tableColumns={filteredColumns} title={title} />
-            <Table aria-label="statements">
+            <Toolbar
+                tableColumns={columns}
+                title={title}
+                setTableState={setTableState}
+                tableState={tableState}
+            />
+            <OrnamentTable aria-label="statements">
                 <TableHead
                     tableColumns={filteredColumns}
-                    order={filterState.order}
-                    orderBy={filterState.orderBy}
-                    setFilterState={setFilterState}
+                    order={tableState.order}
+                    orderBy={tableState.orderBy}
+                    setTableState={setTableState}
                 />
                 <TableBody
                     loading={loading}
                     error={error}
                     rows={enhancedRows}
+                    onRowClick={onRowClick}
+                    rowsPerPage={rowsPerPage || tableState?.rowsPerPage}
                 />
-            </Table>
-            {/* <Box
-                my={3}
-                px={3}
-                display="flex"
-                justifyContent="space-between"
-                width="100%"
-            >
-                <Typography align="right" component="div" variant="caption">
-                    Записей на странице {items.length}
-                    {' из '}
-                    {totalItemsCount}
-                </Typography>
-                <Box display="flex" flexWrap="no-wrap">
-                    <Box mr={3}>
-                        <CountPerPage />
-                    </Box>
-                    <Pagination
-                        onChange={onChangePage}
-                        page={currentPage}
-                        count={totalPages}
-                    />
-                </Box>
-            </Box> */}
+            </OrnamentTable>
+            <TablePagination
+                totalItemsCount={totalItemsCount}
+                currentPage={currentPage}
+                pagesCount={pagesCount}
+                rowsPerPageOptions={rowsPerPageOptions}
+                rowsPerPage={rowsPerPage || tableState?.rowsPerPage}
+                setTableState={setTableState}
+                itemsCount={enhancedRows.length}
+            />
         </TableContainer>
     );
 };
 
-export default React.memo(TableComponent);
+/**
+ * Таблица для отображения данных с сервера
+ *
+ * 🚨 Поддерживает только серверную фильтрацию 🚨
+ */
+
+export const Table = React.memo(TableComponent);

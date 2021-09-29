@@ -31,6 +31,7 @@ export const Create: React.FC<CreateProps> = ({ open, onClose }) => {
         date: DateTime.local().toJSDate(),
         type: '',
         sum: 0,
+        _id: '123',
     });
 
     /** Обработчик событий ввода в инпут */
