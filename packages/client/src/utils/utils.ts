@@ -47,7 +47,7 @@ export const headCells: HeadCell[] = [
         isActive: true,
         filterType: 'text',
     },
-    { name: 'user', label: 'Клиент', isActive: true, filterType: 'text' },
+    { name: 'user_name', label: 'Клиент', isActive: true, filterType: 'text' },
     {
         name: 'type',
         label: 'Тип транзакции',

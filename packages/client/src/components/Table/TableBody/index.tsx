@@ -32,7 +32,7 @@ const TableBodyComponent: React.FC<TableBodyProps> = ({
                         key={item.number}
                         {...item}
                         // @ts-ignore
-                        id={item._id}
+                        id={item.id}
                         isLoading={loading}
                     />
                 ))}

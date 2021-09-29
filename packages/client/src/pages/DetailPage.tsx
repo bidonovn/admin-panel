@@ -49,7 +49,7 @@ export const DetailPage: React.FC = () => {
                             {formatDate(transaction?.date)}
                         </Typography>
                         <Typography variant="body2">
-                            Клиент: {transaction?.user}
+                            Клиент: {transaction?.user_name}
                         </Typography>
                     </Box>
                 </Paper>

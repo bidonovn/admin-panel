@@ -1,16 +1,15 @@
 import { Router } from 'express';
-// const { Router } = require('express');
+import { Pool } from 'pg';
+import { config } from '../config';
 import { check, validationResult } from 'express-validator';
-// const { check, validationResult } = require('express-validator');
-import { Transaction } from '../models/Transaction';
-// const Transaction = require('../models/Transaction');
 
+const pool = new Pool(config.credentials);
 const router = Router();
 
 // /api/transactions/add - Добавление записи в таблицу
 router.post(
     '/add',
-    [check('user', 'Введите имя пользователя').exists()],
+    [check('user_name', 'Введите имя пользователя').exists()],
     async (req, res) => {
         try {
             const errors = validationResult(req);
@@ -20,26 +19,23 @@ router.post(
                     message: 'Некорректное имя пользователя',
                 });
             }
-            const { number, user, date, type, sum } = req.body;
+            const { number, user_name, date, type, sum } = req.body;
 
-            const isTransactionExist = await Transaction.findOne({ number });
-            if (isTransactionExist) {
-                return res.status(400).json({
-                    message: 'Транзакция с таким номером уже существует',
+            pool.query(
+                'INSERT INTO transactions(type, user_name, sum, date, number) VALUES($1, $2, $3, $4, $5)',
+                [type, user_name, sum, date, number]
+            )
+                .then((result) => {
+                    return res.status(201).json({
+                        message: `Запись успешно сохранена. Result: ${result}`,
+                    });
+                })
+                .catch((error) => {
+                    console.log('error', error);
+                    return res.status(500).json({
+                        message: `Произошла ошибка: ${error}`,
+                    });
                 });
-            }
-
-            const transaction = new Transaction({
-                number,
-                user,
-                date,
-                type,
-                sum,
-            });
-            await transaction.save();
-            return res
-                .status(201)
-                .json({ message: 'Запись успешно сохранена' });
         } catch (e) {
             return res
                 .status(500)
@@ -57,47 +53,73 @@ router.post('/list', async (req, res) => {
         const orderBy = req.body.query.orderBy || 'date';
         const { filters } = req.body.query;
 
-        const filtersQuery = {};
+        const totalCount = await pool
+            .query('SELECT count(*) from transactions')
+            .then((res) => res.rows[0].count);
 
-        const transformFilterQuery = () => {
-            const filtersWithValue = filters?.filter(
-                (filterItem) => filterItem.value || filterItem.date
-            );
+        const pages = Math.ceil(totalCount / limit);
 
-            filtersWithValue?.map((filter) => {
-                switch (filter.filterType) {
-                    case 'date':
-                        filtersQuery[filter.name] = {
-                            $gte: filter.date.startDate,
-                            $lte: filter.date.endDate,
-                        };
-                        break;
-                    case 'text':
-                        filtersQuery[filter.name] = new RegExp(
-                            filter.value,
-                            'i'
-                        );
-                        break;
-                    default:
-                        filtersQuery[filter.name] = filter.value;
-                }
+        pool.query(
+            `SELECT * FROM transactions ORDER BY ${orderBy} ${order} LIMIT ${limit} OFFSET ${
+                limit * page - limit
+            }`
+        )
+            .then((result) => {
+                return res.status(200).json({
+                    items: result.rows,
+                    count: totalCount,
+                    countOnPage: result.rowCount,
+                    current: page,
+                    pages,
+                });
+            })
+            .catch((error) => {
+                return res.status(400).json({
+                    message: `Произошла ошибка: ${error}`,
+                });
             });
-        };
 
-        transformFilterQuery();
-        const count = await Transaction.count(filtersQuery);
-        const transactions = await Transaction.find(filtersQuery)
-            .sort({ [orderBy]: order })
-            .skip(limit * page - limit)
-            .limit(limit);
+        // const filtersQuery = {};
 
-        return res.json({
-            items: transactions,
-            count,
-            countOnPage: transactions.length,
-            current: page,
-            pages: Math.ceil(count / limit),
-        });
+        // const transformFilterQuery = () => {
+        //     const filtersWithValue = filters?.filter(
+        //         (filterItem) => filterItem.value || filterItem.date
+        //     );
+
+        //     filtersWithValue?.map((filter) => {
+        //         switch (filter.filterType) {
+        //             case 'date':
+        //                 filtersQuery[filter.name] = {
+        //                     $gte: filter.date.startDate,
+        //                     $lte: filter.date.endDate,
+        //                 };
+        //                 break;
+        //             case 'text':
+        //                 filtersQuery[filter.name] = new RegExp(
+        //                     filter.value,
+        //                     'i'
+        //                 );
+        //                 break;
+        //             default:
+        //                 filtersQuery[filter.name] = filter.value;
+        //         }
+        //     });
+        // };
+
+        // transformFilterQuery();
+        // const count = await Transaction.count(filtersQuery);
+        // const transactions = await Transaction.find(filtersQuery)
+        //     .sort({ [orderBy]: order })
+        //     .skip(limit * page - limit)
+        //     .limit(limit);
+
+        // return res.json({
+        //     items: transactions,
+        //     count,
+        //     countOnPage: transactions.length,
+        //     current: page,
+        //     pages: Math.ceil(count / limit),
+        // });
     } catch (e) {
         return res
             .status(500)
@@ -108,8 +130,15 @@ router.post('/list', async (req, res) => {
 // /api/transactions/:id - Получение подробной информации о транзакции по id
 router.get('/:id', async (req, res) => {
     try {
-        const transaction = await Transaction.findById(req.params.id);
-        return res.json(transaction);
+        pool.query(`SELECT * FROM transactions WHERE id = ${req.params.id}`)
+            .then((result) => {
+                return res.json(result.rows[0]);
+            })
+            .catch((error) => {
+                return res
+                    .status(404)
+                    .json({ message: 'Запись не найдена', error });
+            });
     } catch (e) {
         return res
             .status(500)

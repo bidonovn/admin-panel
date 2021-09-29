@@ -16,7 +16,7 @@ export interface Transaction {
     /** Номер транзакции */
     number: number;
     /** Пользователь */
-    user: string;
+    user_name: string;
     /** Дата транзакции */
     date: Date | null;
     /** Тип транзакции */

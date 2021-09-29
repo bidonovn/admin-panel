@@ -27,7 +27,7 @@ export const Create: React.FC<CreateProps> = ({ open, onClose }) => {
     const { addTransaction, loading } = useAddTransaction();
     const [record, setRecord] = useState<Transaction>({
         number: randomNumber(),
-        user: '',
+        user_name: '',
         date: DateTime.local().toJSDate(),
         type: '',
         sum: 0,
@@ -69,8 +69,8 @@ export const Create: React.FC<CreateProps> = ({ open, onClose }) => {
                         <Grid item xs={12}>
                             <TextField
                                 label="Имя пользователя"
-                                name="user"
-                                value={record.user}
+                                name="user_name"
+                                value={record.user_name}
                                 onChange={textFieldHandler}
                                 fullWidth
                             />

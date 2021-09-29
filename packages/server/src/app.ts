@@ -1,9 +1,12 @@
 import express from 'express';
+import { Client } from 'pg';
 import { config } from '../config';
 import mongoose from 'mongoose';
 import cors from 'cors';
 
 const PORT = config.port || 5000;
+const client = new Client(config.credentials);
+
 const app = express();
 
 app.use(express.json());
@@ -12,7 +15,7 @@ app.use('/api/transactions', require('../routes/transactions.routes'));
 
 async function start() {
     try {
-        await mongoose.connect(config.dataBaseUrl, {});
+        await client.connect();
         app.listen(PORT, () =>
             console.log(`App has been started at port ${PORT}`)
         );
@@ -25,4 +28,3 @@ async function start() {
 }
 
 start();
-// console.log(111);
