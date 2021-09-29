@@ -35,8 +35,8 @@ export const transformDate = (date: Date, dayPart: 'start' | 'end'): string => {
 };
 
 export const defaultDates = {
-    start: DateTime.local().minus({ weeks: 2 }).startOf('day').toString(),
-    end: DateTime.local().endOf('day').toString(),
+    start: DateTime.local().minus({ weeks: 2 }).startOf('day'),
+    end: DateTime.local().endOf('day'),
 };
 
 /** Массив с информацией о существующих полях */

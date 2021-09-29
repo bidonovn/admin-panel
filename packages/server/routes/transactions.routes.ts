@@ -1,10 +1,13 @@
-const { Router } = require('express');
-const { check, validationResult } = require('express-validator');
-const Transaction = require('../models/Transaction');
+import { Router } from 'express';
+// const { Router } = require('express');
+import { check, validationResult } from 'express-validator';
+// const { check, validationResult } = require('express-validator');
+import { Transaction } from '../models/Transaction';
+// const Transaction = require('../models/Transaction');
 
 const router = Router();
 
-// /api/transactions/add
+// /api/transactions/add - Добавление записи в таблицу
 router.post(
     '/add',
     [check('user', 'Введите имя пользователя').exists()],
@@ -45,7 +48,7 @@ router.post(
     }
 );
 
-// /api/transactions/list
+// /api/transactions/list - Получение списка транзакций с фильтрами, сортировкой и пагинацией
 router.post('/list', async (req, res) => {
     try {
         const limit = req.body.query.limit || 5;
@@ -57,7 +60,11 @@ router.post('/list', async (req, res) => {
         const filtersQuery = {};
 
         const transformFilterQuery = () => {
-            filters?.forEach((filter) => {
+            const filtersWithValue = filters?.filter(
+                (filterItem) => filterItem.value || filterItem.date
+            );
+
+            filtersWithValue?.forEach((filter) => {
                 switch (filter.filterType) {
                     case 'date':
                         filtersQuery[filter.name] = {
@@ -98,7 +105,7 @@ router.post('/list', async (req, res) => {
     }
 });
 
-// /api/transactions/:id
+// /api/transactions/:id - Получение подробной информации о транзакции по id
 router.get('/:id', async (req, res) => {
     try {
         const transaction = await Transaction.findById(req.params.id);

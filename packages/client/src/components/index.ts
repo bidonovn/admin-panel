@@ -6,4 +6,8 @@ export * from './Pagination';
 export * from './Table';
 export * from './Filters';
 export * from './FieldsList';
+export * from './FiltersList';
+export * from './SidebarHeader';
+export * from './FieldsSidebar';
+export * from './Highlighter';
 export * from './DataTable';

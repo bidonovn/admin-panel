@@ -18,8 +18,8 @@ const DateRangeFilterComponent: React.FC<DateRangeFilterProps> = ({
     onChange,
 }) => {
     const [dateRange, setDateRange] = useState<DateRange>({
-        start: defaultDates.start,
-        end: defaultDates.end,
+        start: defaultDates.start.toString(),
+        end: defaultDates.end.toString(),
     });
 
     const maxDate = React.useRef(Date.now());

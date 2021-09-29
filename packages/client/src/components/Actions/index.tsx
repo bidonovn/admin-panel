@@ -1,42 +1,36 @@
 import React, { useState } from 'react';
-import { Box, Button } from '@abdt/ornament';
-import { Plus, List } from '@abdt/icons';
+import { Box, Tooltip, IconButton } from '@abdt/ornament';
+import { FilterFunnel, Edit } from '@abdt/icons';
 import { FieldsList, Filters } from '@components';
-import { AppContext } from '@context/AppContext.Provider';
 
 export const Actions: React.FC = () => {
-    const { filters, setFilters, userCells } = React.useContext(AppContext);
     const [openDialog, setOpenDialog] = useState<boolean>(false);
+    const [openFilters, setOpenFilters] = useState<boolean>(false);
 
     const fieldsListDialogHandler = () => setOpenDialog(!openDialog);
-    const addFilterHandler = () =>
-        setFilters([...filters, userCells[filters.length]]);
+    const filtersHandler = () => setOpenFilters(!openFilters);
 
-    const disabled = Object.keys(filters).length === userCells.length;
     return (
         <>
             <Box my={2} display="flex" justifyContent="space-between">
-                <Button
-                    size="small"
-                    variant="outlined"
-                    color="secondary"
-                    startIcon={<Plus size="small" />}
-                    onClick={addFilterHandler}
-                    disabled={disabled}
+                <Tooltip
+                    title={openFilters ? 'Скрыть фильтры' : 'Показать фильтры'}
+                    placement="right-end"
                 >
-                    Добавить фильтр
-                </Button>
-                <Button
-                    size="small"
-                    variant="outlined"
-                    color="secondary"
-                    startIcon={<List />}
-                    onClick={fieldsListDialogHandler}
-                >
-                    Настройка полей
-                </Button>
+                    <IconButton color="secondary" onClick={filtersHandler}>
+                        <FilterFunnel />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Настройка полей" placement="left-start">
+                    <IconButton
+                        color="secondary"
+                        onClick={fieldsListDialogHandler}
+                    >
+                        <Edit />
+                    </IconButton>
+                </Tooltip>
             </Box>
-            <Filters />
+            <Filters open={openFilters} setOpen={setOpenFilters} />
             <FieldsList open={openDialog} onClose={fieldsListDialogHandler} />
         </>
     );

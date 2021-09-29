@@ -8,13 +8,19 @@ import {
     InputLabel,
     IconButton,
     Button,
+    Tooltip,
 } from '@abdt/ornament';
-import { Bin } from '@abdt/icons';
+import { Plus, Minus } from '@abdt/icons';
 import { find } from 'lodash';
 import { AppContext } from '@context/AppContext.Provider';
 import SearchField from './SearchField';
 
-export const Filters: React.FC = () => {
+interface FiltersProps {
+    open: boolean;
+    setOpen: (open: boolean) => void;
+}
+
+export const Filters: React.FC<FiltersProps> = ({ open, setOpen }) => {
     const { userCells, filters, setFilters, query, setQuery } =
         React.useContext(AppContext);
 
@@ -30,8 +36,16 @@ export const Filters: React.FC = () => {
             setFilters(newArr);
         };
 
+    /** Добавление фильтра */
+    const addFilterHandler = () =>
+        setFilters([...filters, userCells[filters.length]]);
+
     /** Удаление фильтра */
     const deleteFilterHandler = (index: number) => () => {
+        if (filters.length === 1) {
+            return;
+        }
+
         const newArr = filters;
         newArr.splice(index, 1);
         setFilters([...newArr]);
@@ -40,73 +54,111 @@ export const Filters: React.FC = () => {
     /** Применение фильтров */
     const acceptFilters = () => {
         setQuery({ ...query, filters });
+        setOpen(!open);
     };
 
     /** Сброс фильтров */
     const resetFilters = () => {
-        setFilters([]);
+        setFilters([userCells[0]]);
         setQuery({ ...query, filters: [] });
     };
 
+    const disabled = Object.keys(filters).length === userCells.length;
+
     return (
         <>
-            <Box my={2}>
-                {filters.map((filter, index) => (
-                    <Grid container spacing={2} key={`${filter.name}_${index}`}>
-                        <Grid item xs={3}>
-                            <FormControl size="small" fullWidth>
-                                <InputLabel>Выберите фильтр</InputLabel>
-                                <Select
-                                    onChange={selectFilterHandler(index)}
-                                    value={filter?.name}
-                                >
-                                    {userCells.map((userCell) => (
-                                        <MenuItem
-                                            value={userCell.name}
-                                            key={userCell.name}
-                                            disabled={
-                                                !!find(filters, {
-                                                    name: userCell.name,
-                                                })
-                                            }
-                                        >
-                                            {userCell.label}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={3}>
-                            <SearchField
-                                name={filter?.name}
-                                type={filter?.filterType}
-                                options={filter?.options}
-                            />
-                        </Grid>
-                        <Grid xs={1}>
-                            <IconButton>
-                                <Bin
-                                    color="#00b2a9"
-                                    onClick={deleteFilterHandler(index)}
-                                />
-                            </IconButton>
-                        </Grid>
-                    </Grid>
-                ))}
-            </Box>
-            {!!filters.length && (
-                <Box my={2} display="flex">
-                    <Button
-                        size="small"
-                        variant="outlined"
-                        onClick={acceptFilters}
-                    >
-                        Применить фильтры
-                    </Button>
-                    <Button variant="text" size="small" onClick={resetFilters}>
-                        Сбросить фильтры
-                    </Button>
-                </Box>
+            {open && (
+                <>
+                    <Box my={2}>
+                        {filters.map((filter, index) => (
+                            <Grid
+                                container
+                                spacing={2}
+                                key={`${filter.name}_${index}`}
+                            >
+                                <Grid item xs={4}>
+                                    <Box display="flex" alignItems="center">
+                                        <Box mr={2}>
+                                            <IconButton
+                                                color="secondary"
+                                                onClick={addFilterHandler}
+                                                disabled={disabled}
+                                            >
+                                                <Plus />
+                                            </IconButton>
+                                        </Box>
+                                        <FormControl size="small" fullWidth>
+                                            <InputLabel>
+                                                Выберите фильтр
+                                            </InputLabel>
+                                            <Select
+                                                onChange={selectFilterHandler(
+                                                    index
+                                                )}
+                                                value={filter?.name}
+                                            >
+                                                {userCells.map((userCell) => (
+                                                    <MenuItem
+                                                        value={userCell.name}
+                                                        key={userCell.name}
+                                                        disabled={
+                                                            !!find(filters, {
+                                                                name: userCell.name,
+                                                            })
+                                                        }
+                                                    >
+                                                        {userCell.label}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Box display="flex" alignItems="center">
+                                        <SearchField
+                                            name={filter?.name}
+                                            type={filter?.filterType}
+                                            options={filter?.options}
+                                        />
+                                        <Box ml={2}>
+                                            <Tooltip
+                                                title="Удалить фильтр"
+                                                placement="right-end"
+                                            >
+                                                <IconButton
+                                                    color="secondary"
+                                                    onClick={deleteFilterHandler(
+                                                        index
+                                                    )}
+                                                >
+                                                    <Minus />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
+                                    </Box>
+                                </Grid>
+                            </Grid>
+                        ))}
+                    </Box>
+                    <Box my={4} display="flex">
+                        <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={acceptFilters}
+                        >
+                            Применить фильтры
+                        </Button>
+                        <Box mx={2} />
+                        <Button
+                            variant="text"
+                            size="small"
+                            onClick={resetFilters}
+                        >
+                            Сбросить фильтры
+                        </Button>
+                    </Box>
+                </>
             )}
         </>
     );

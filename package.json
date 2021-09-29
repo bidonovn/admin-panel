@@ -1,37 +1,38 @@
 {
-  "name": "admin-panel",
-  "private": true,
-  "scripts": {
-    "dev": "concurrently \"wsrun --parallel dev\"",
-    "lint": "wsrun -s lint",
-    "build": "yarn workspaces run build",
-    "clean": "yarn workspaces run clean && rimraf node_modules",
-    "test": "wsrun -s test --passWithNoTests"
-  },
-  "workspaces": [
-    "packages/*"
-  ],
-  "dependencies": {
-    "concurrently": "^5.3.0",
-    "cross-env": "^7.0.3",
-    "dotenv": "^8.2.0",
-    "dotenv-cli": "^4.0.0",
-    "eslint-config-abdt": "^0.1.7",
-    "eslint-plugin-tsc": "2.0.0",
-    "husky": "^7.0.2",
-    "jest": "^26.6.3",
-    "lint-staged": "^11.1.2",
-    "lodash": "^4.17.20",
-    "serve": "^11.3.2",
-    "ts-jest": "^26.5.6",
-    "wsrun": "^5.2.4"
-  },
-  "lint-staged": {
-    "packages/**/*.{ts,tsx}": [
-      "eslint --fix --plugin tsc --rule 'tsc/config: [2, {configFile: ./packages/client/tsconfig.json}]'"
+    "name": "admin-panel",
+    "private": true,
+    "scripts": {
+        "dev": "concurrently \"wsrun --parallel dev\"",
+        "lint": "wsrun -s lint",
+        "build": "yarn workspaces run build",
+        "clean": "yarn workspaces run clean && rimraf node_modules",
+        "test": "wsrun -s test --passWithNoTests"
+    },
+    "workspaces": [
+        "packages/*"
     ],
-    "packages/**/*.js": [
-      "eslint --fix"
-    ]
-  }
+    "dependencies": {
+        "concurrently": "^5.3.0",
+        "cross-env": "^7.0.3",
+        "dotenv": "^8.2.0",
+        "dotenv-cli": "^4.0.0",
+        "eslint-config-abdt": "^0.1.7",
+        "eslint-plugin-tsc": "2.0.0",
+        "husky": "^7.0.2",
+        "jest": "^26.6.3",
+        "lint-staged": "^11.1.2",
+        "lodash": "^4.17.20",
+        "serve": "^11.3.2",
+        "ts-jest": "^26.5.6",
+        "wsrun": "^5.2.4",
+        "eslint": "^7.12.1"
+    },
+    "lint-staged": {
+        "packages/**/*.{ts,tsx}": [
+            "eslint --fix --plugin tsc --rule 'tsc/config: [2, {configFile: ./packages/client/tsconfig.json}]'"
+        ],
+        "packages/**/*.js": [
+            "eslint --fix"
+        ]
+    }
 }
